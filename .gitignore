@@ -1,5 +1,8 @@
-# mypy 
-.mypy_cache/*
+# mypy
+.mypy_cache 
 
 # pycache
-__pycache__/*
+__pycache__
+
+# vscode
+.vscode
