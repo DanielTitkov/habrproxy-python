@@ -1,5 +1,5 @@
 from http.server import BaseHTTPRequestHandler
-import urllib.request
+import urllib.request, urllib.parse
 from typing import Any, List
 
 
@@ -16,7 +16,8 @@ class MutatorHandler(BaseHTTPRequestHandler):
 
     def do_GET(self) -> None:
         self.do_HEAD()
-        data = urllib.request.urlopen(self.target_url).read()
+        url = urllib.parse.urljoin(self.target_url, self.path)
+        data = urllib.request.urlopen(url).read()
         mutated_data = self.apply_mutators(data)
         self.wfile.write(mutated_data)
 
