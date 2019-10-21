@@ -12,15 +12,14 @@ def prepare_soup_mutator_set(mutators: List[Callable[[bytes], bytes]]):
     without parsing html every time.
     """
     def soup_mutator_set(data: bytes) -> bytes:
-        soup = bs4.BeautifulSoup(data, "html.parser")
+        soup = bs4.BeautifulSoup(data, "lxml")
         for mutator in mutators:
             try:
                 soup = mutator(soup)
             except Exception as e:
                 print("Unable to apply '{}' mutator: {}".format(
                     mutator.__name__, e))
-        mutated_data = bytes(str(soup), encoding='utf-8')
-        return mutated_data
+        return soup.encode()
     return soup_mutator_set
 
 
@@ -46,12 +45,20 @@ def prepare_append_symbol_if_length(
 
 def prepare_make_links_local(
     local_url: str,
-    urls_to_replace: List[str]
+    urls_to_replace: List[str],
+    svg: bool = True,
 ) -> Callable[[bs4.BeautifulSoup], bs4.BeautifulSoup]:
     def make_links_local(soup: bs4.BeautifulSoup) -> bs4.BeautifulSoup:
-        selectors = ['a[href^="{}"]'.format(u) for u in urls_to_replace]
         urls_regexp = re.compile("({})".format("|".join(urls_to_replace)))
+        selectors = ['a[href^="{}"]'.format(u) for u in urls_to_replace]
         for a in soup.select(",".join(selectors)):
             a['href'] = urls_regexp.sub("http://" + local_url, a['href'])
+
+        if svg:
+            svg_selectors = ['use[xlink\:href^="{}"]'.format(u)
+                             for u in urls_to_replace]
+            for svg_use in soup.select(",".join(svg_selectors)):
+                svg_use['xlink:href'] = urls_regexp.sub(
+                    "http://" + local_url, svg_use['xlink:href'])
         return soup
     return make_links_local

@@ -1,5 +1,7 @@
 from http.server import BaseHTTPRequestHandler
-import urllib.request, urllib.parse
+import urllib.request
+import urllib.parse
+import codecs
 from typing import Any, List
 
 
@@ -9,17 +11,24 @@ class MutatorHandler(BaseHTTPRequestHandler):
         self.mutators = mutators
         super().__init__(*args, **kwargs)
 
-    def do_HEAD(self) -> None:
+    def do_HEAD(self, content_type: str = "text/html") -> None:
         self.send_response(200)
-        self.send_header("Content-type", "text/html")
+        self.send_header("Content-type", content_type)
         self.end_headers()
 
     def do_GET(self) -> None:
-        self.do_HEAD()
         url = urllib.parse.urljoin(self.target_url, self.path)
-        data = urllib.request.urlopen(url).read()
-        mutated_data = self.apply_mutators(data)
-        self.wfile.write(mutated_data)
+        response = urllib.request.urlopen(url)
+        content_type = response.headers.get("Content-type")
+        data = response.read()
+
+        self.do_HEAD(content_type)
+
+        if "text/html" in content_type:
+            mutated_data = self.apply_mutators(data)
+            self.wfile.write(mutated_data)
+        else:
+            self.wfile.write(data)
 
     def apply_mutators(self, data: bytes) -> bytes:
         mutated_data = data
