@@ -1,4 +1,5 @@
 import bs4
+import argparse
 from http.server import ThreadingHTTPServer
 
 from proxy import Proxy
@@ -10,15 +11,24 @@ from mutators import (
 )
 
 if __name__ == "__main__":
-    target_url = "https://habr.com/en/all/"
-    local_host = "localhost"
-    local_port = 9000
-    local_url = "{}:{}".format(local_host, local_port)
+    parser = argparse.ArgumentParser(description='Harb Proxy Reader')
+    parser.add_argument('-l', '--local',
+                        help="Local host",
+                        default="localhost")
+    parser.add_argument('-p', '--port',
+                        help="Local port",
+                        type=int, default=8018)
+    parser.add_argument('-t', '--target',
+                        help="Site to proxy",
+                        default="https://habr.com/ru/all/")
+    args = parser.parse_args()
+
+    local_url = "{}:{}".format(args.local, args.port)
 
     proxy = Proxy(
-        target_url=target_url,
-        local_host=local_host,
-        local_port=local_port,
+        target_url=args.target,
+        local_host=args.local,
+        local_port=args.port,
         server=ThreadingHTTPServer,
         handler=MutatorHandler,
         mutators=[

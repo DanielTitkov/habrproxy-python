@@ -24,11 +24,14 @@ class MutatorHandler(BaseHTTPRequestHandler):
 
         self.do_HEAD(content_type)
 
-        if "text/html" in content_type:
-            mutated_data = self.apply_mutators(data)
-            self.wfile.write(mutated_data)
-        else:
-            self.wfile.write(data)
+        try:
+            if "text/html" in content_type:
+                mutated_data = self.apply_mutators(data)
+                self.wfile.write(mutated_data)
+            else:
+                self.wfile.write(data)
+        except BrokenPipeError:
+            return
 
     def apply_mutators(self, data: bytes) -> bytes:
         mutated_data = data

@@ -50,15 +50,13 @@ def prepare_make_links_local(
 ) -> Callable[[bs4.BeautifulSoup], bs4.BeautifulSoup]:
     def make_links_local(soup: bs4.BeautifulSoup) -> bs4.BeautifulSoup:
         urls_regexp = re.compile("({})".format("|".join(urls_to_replace)))
-        selectors = ['a[href^="{}"]'.format(u) for u in urls_to_replace]
-        for a in soup.select(",".join(selectors)):
-            a['href'] = urls_regexp.sub("http://" + local_url, a['href'])
-
-        if svg:
-            svg_selectors = ['use[xlink\:href^="{}"]'.format(u)
-                             for u in urls_to_replace]
-            for svg_use in soup.select(",".join(svg_selectors)):
-                svg_use['xlink:href'] = urls_regexp.sub(
-                    "http://" + local_url, svg_use['xlink:href'])
+        selector_templates = [
+            ('a[href^="{}"]', 'href'),
+            ('use[xlink\:href^="{}"]', 'xlink:href'),
+        ]
+        for template, attr in selector_templates:       
+            selectors = [template.format(u) for u in urls_to_replace]
+            for tag in soup.select(",".join(selectors)):
+                tag[attr] = urls_regexp.sub("http://" + local_url, tag[attr])
         return soup
     return make_links_local
