@@ -12,8 +12,9 @@ Does nothing useful, just adds a trademark symbol to every 6-character word.
 
 * Some ads may not work correctly (probaly due to the domain limitations)
 * Unstable while working with bad connection
+* Kinda slow
 
-### Usage with docker 
+### Using with docker
 
 To run the server in container:
 
@@ -21,7 +22,9 @@ To run the server in container:
 docker build -t habr-proxy . && docker run -i -t -p 8018:8018 habr-proxy
 ```
 
-### Usage without docker 
+Then go to [localhost:8018](http://localhost:8018/)
+
+### Using without docker 
 
 Just install dependencies from requirements.txt and run main.py (use -h flag to see help):
 

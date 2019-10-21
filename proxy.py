@@ -1,4 +1,4 @@
-import functools 
+import functools
 from typing import Any, List, Callable
 
 
@@ -20,7 +20,9 @@ class Proxy:
         self.mutators = mutators
 
     def run(self) -> None:
-        handler = functools.partial(self.handler, self.target_url, self.mutators)
+        handler = functools.partial(
+            self.handler, self.target_url, self.mutators
+        )
         server = self.server((self.local_host, self.local_port), handler)
         print("Starting server at localhost:{}".format(self.local_port))
 

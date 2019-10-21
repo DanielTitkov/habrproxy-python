@@ -7,7 +7,7 @@ from utils import split_into_tokens
 
 def prepare_soup_mutator_set(mutators: List[Callable[[bytes], bytes]]):
     """
-    This wrapper function is needed to apply 
+    This wrapper function is needed to apply
     several html tree transformations
     without parsing html every time.
     """
@@ -54,7 +54,7 @@ def prepare_make_links_local(
             ('a[href^="{}"]', 'href'),
             ('use[xlink\:href^="{}"]', 'xlink:href'),
         ]
-        for template, attr in selector_templates:       
+        for template, attr in selector_templates:
             selectors = [template.format(u) for u in urls_to_replace]
             for tag in soup.select(",".join(selectors)):
                 tag[attr] = urls_regexp.sub("http://" + local_url, tag[attr])

@@ -1,12 +1,16 @@
 from http.server import BaseHTTPRequestHandler
 import urllib.request
 import urllib.parse
-import codecs
 from typing import Any, List
 
 
 class MutatorHandler(BaseHTTPRequestHandler):
-    def __init__(self, target_url: str, mutators: List[Any], *args: Any, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        target_url: str,
+        mutators: List[Any],
+        *args: Any, **kwargs: Any
+    ) -> None:
         self.target_url = target_url
         self.mutators = mutators
         super().__init__(*args, **kwargs)
