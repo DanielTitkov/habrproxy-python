@@ -5,7 +5,9 @@ import re
 from utils import split_into_tokens
 
 
-def prepare_soup_mutator_set(mutators: List[Callable[[bytes], bytes]]):
+def prepare_soup_mutator_set(
+    mutators: List[Callable[[bs4.BeautifulSoup], bs4.BeautifulSoup]]
+):
     """
     This wrapper function is needed to apply
     several html tree transformations
