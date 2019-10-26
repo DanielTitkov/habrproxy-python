@@ -4,7 +4,7 @@ Does nothing useful, just adds a trademark symbol to every 6-character word.
 
 ### Features
 
-* All Harb links are processed as local
+* All Habr links are processed as local
 * SVG is supported
 * Formulas are supported
 
